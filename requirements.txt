@@ -1,0 +1,14 @@
+fastapi[standard]>=0.121.0
+uvicorn[standard]>=0.38.0
+sqlalchemy>=2.0.36
+psycopg[binary]>=3.2.0
+pydantic>=2.12.0
+pydantic-settings>=2.1.0
+python-dotenv>=1.0.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+httpx>=0.25.0
+python-jose[cryptography]>=3.3.0  # JWT token handling
+passlib[bcrypt]>=1.7.4            # Password hashing
+python-multipart>=0.0.6           # Form data parsing (for login)
+slowapi>=0.1.5

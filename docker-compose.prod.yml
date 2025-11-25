@@ -1,0 +1,57 @@
+version: '3.8'
+
+# Production configuration
+# Usage: docker-compose -f docker-compose.prod.yml up
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: airport_db_prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Don't expose port in production (only internal network)
+    # ports:
+    #   - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - airport_network
+    restart: always
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airport_api_prod
+    # Production: use uvicorn directly (no dev mode)
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+    # Don't mount volumes in production (use built image)
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ENVIRONMENT: production
+      DEBUG: "false"
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - airport_network
+    restart: always
+    # Add reverse proxy (nginx) in front for production
+
+volumes:
+  postgres_data:
+
+networks:
+  airport_network:
+    driver: bridge
+

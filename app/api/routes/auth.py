@@ -7,8 +7,8 @@ from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.config import settings
 from app.crud import user as crud_user
-from app.schemas.user import Token, UserCreate, UserResponse
-from app.core.auth import get_current_active_user, get_current_user
+from app.schemas.user import Token, UserCreate, UserResponse, UserUpdate
+from app.core.auth import get_current_active_user, get_current_user, require_role
 from app.models.user import User, UserRole
 from app.core.limiter import limiter
 from typing import List
@@ -16,7 +16,7 @@ from typing import List
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("3/hour")
+@limiter.limit("30/hour")
 def register(
     request: Request,
     user: UserCreate,
@@ -128,3 +128,38 @@ def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     users = crud_user.get_all_users(db)
     print('***********users: ', users)
     return users
+
+@router.put("/users/{user_id}", response_model=UserResponse)
+@limiter.limit("30/minute")
+def update_user(
+    request: Request,
+    user_id: int,
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.ADMIN]))
+):
+    """Update a user by ID (requires authentication and admin role)."""
+    user = crud_user.update_user(db, user_id=user_id, user_update=user_update)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {user_id} not found"
+        )
+    return user
+
+@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("10/minute")
+def delete_user_by_id(
+    request: Request,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.ADMIN]))
+):
+    """Delete a user by ID (requires authentication and admin role)."""
+    deleted = crud_user.delete_user(db, user_id=user_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {user_id} not found"
+        )
+    return None

@@ -14,7 +14,7 @@ def test_create_asset_endpoint(client):
         "description": "Scanner for gate 5 operations",
         "status": "Available",
         "location": "Terminal A",
-        "asset_type": "Gate Equipment"
+        "type": "Gate Equipment"
     }
     
     # Act
@@ -27,7 +27,7 @@ def test_create_asset_endpoint(client):
     assert data["description"] == "Scanner for gate 5 operations"
     assert data["status"] == "Available"
     assert data["location"] == "Terminal A"
-    assert data["asset_type"] == "Gate Equipment"
+    assert data["type"] == "Gate Equipment"
     assert "id" in data
     assert "created_at" in data
     assert "updated_at" in data

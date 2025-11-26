@@ -10,7 +10,7 @@ class AssetBase(BaseModel):
     description: Optional[str] = Field(None, max_length=1000, description="Asset description")
     status: AssetStatus = Field(default=AssetStatus.UNKNOWN, description="Current asset status")
     location: Optional[str] = Field(None, max_length=255, description="Asset location")
-    asset_type: Optional[str] = Field(None, max_length=100, description="Type of asset")
+    type: Optional[str] = Field(None, max_length=100, description="Type of asset")
 
 
 class AssetCreate(AssetBase):
@@ -24,7 +24,7 @@ class AssetUpdate(BaseModel):
     description: Optional[str] = Field(None, max_length=1000)
     status: Optional[AssetStatus] = None
     location: Optional[str] = Field(None, max_length=255)
-    asset_type: Optional[str] = Field(None, max_length=100)
+    type: Optional[str] = Field(None, max_length=100)
 
 
 class AssetResponse(AssetBase):

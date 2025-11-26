@@ -14,7 +14,7 @@ def test_complete_asset_lifecycle(client):
         "description": "Scanner for gate 5 operations",
         "status": "Available",
         "location": "Terminal A",
-        "asset_type": "Gate Equipment"
+        "type": "Gate Equipment"
     })
     assert create_response.status_code == 201
     asset_data = create_response.json()
@@ -24,7 +24,7 @@ def test_complete_asset_lifecycle(client):
     assert asset_data["name"] == "Gate Scanner #5"
     assert asset_data["status"] == "Available"
     assert asset_data["location"] == "Terminal A"
-    assert asset_data["asset_type"] == "Gate Equipment"
+    assert asset_data["type"] == "Gate Equipment"
     assert "created_at" in asset_data
     assert "updated_at" in asset_data
     
@@ -86,19 +86,19 @@ def test_asset_workflow_with_multiple_assets(client):
         "name": "Maintenance Cart #1",
         "status": "Available",
         "location": "Terminal A",
-        "asset_type": "Maintenance Tool"
+        "type": "Maintenance Tool"
     })
     asset2_response = client.post("/assets/", json={
         "name": "Baggage Conveyor",
         "status": "In Use",
         "location": "Terminal B",
-        "asset_type": "Gate Equipment"
+        "type": "Gate Equipment"
     })
     asset3_response = client.post("/assets/", json={
         "name": "Broken Scanner",
         "status": "Needs Repair",
         "location": "Terminal C",
-        "asset_type": "Gate Equipment"
+        "type": "Gate Equipment"
     })
     
     asset1 = asset1_response.json()

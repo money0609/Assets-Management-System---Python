@@ -22,7 +22,7 @@ def test_create_asset(db_session):
         description="A test scanner for gate operations",
         status=AssetStatus.AVAILABLE,
         location="Terminal A",
-        asset_type="Gate Equipment"
+        type="Gate Equipment"
     )
     
     # Act
@@ -34,7 +34,7 @@ def test_create_asset(db_session):
     assert created_asset.description == "A test scanner for gate operations"
     assert created_asset.status == AssetStatus.AVAILABLE
     assert created_asset.location == "Terminal A"
-    assert created_asset.asset_type == "Gate Equipment"
+    assert created_asset.type == "Gate Equipment"
     assert created_asset.created_at is not None
     assert created_asset.updated_at is not None
 

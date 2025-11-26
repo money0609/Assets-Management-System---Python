@@ -6,8 +6,8 @@ from app.models.user import UserRole
 class UserBase(BaseModel):
     """Base schema for User."""
     username: str = Field(..., min_length=3, max_length=25)
-    first_name: str = Field(..., min_length=3, max_length=25)
-    last_name: str = Field(..., min_length=3, max_length=25)
+    first_name: str = Field(..., min_length=2, max_length=25)
+    last_name: str = Field(..., min_length=1, max_length=25)
     role: UserRole = Field(default=UserRole.VIEWER)
     is_active: bool = Field(default=True)
 
@@ -17,7 +17,8 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     """Schema for updating user (all fields optional)."""
-    username: Optional[str] = Field(None, min_length=3, max_length=25)
+    first_name: Optional[str] = Field(None, min_length=2, max_length=25)
+    last_name: Optional[str] = Field(None, min_length=1, max_length=25)
     role: Optional[UserRole] = None
     is_active: Optional[bool] = None
 

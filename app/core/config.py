@@ -4,8 +4,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
+        # .env file is optional - environment variables take precedence
+        # In Docker, environment variables are set by docker-compose.yml
+        # Pydantic-settings checks environment variables FIRST, then .env file
         env_file=".env",
-        case_sensitive=False
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore"
     )
     
     database_url: str = Field(..., env="DATABASE_URL")

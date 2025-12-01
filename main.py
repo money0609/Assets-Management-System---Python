@@ -37,3 +37,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Airport Asset Management API", "version": "1.0.0"}
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint for Docker and monitoring"""
+    return {"status": "healthy", "service": "airport-asset-api"}
